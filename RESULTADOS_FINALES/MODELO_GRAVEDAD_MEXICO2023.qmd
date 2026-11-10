@@ -1,0 +1,264 @@
+---
+title: "Modelo de gravedad del comercio de México (2023)"
+author: "BERNARDINO MUÑOZ KARLA VERÓNICA - VIURQUIS NAVA DULCE MARÍA - VIURQUIZ ANDRADE DANTE EMILIANO"
+format:
+  html:
+    code-fold: true
+    code-summary: "Ver código"
+---
+
+Este documento contiene el código en R utilizado para estimar un modelo de gravedad de las exportaciones de México hacia 115 países en 2023. Las variables explicativas son el PIB del país socio, la distancia, la existencia de un TLC, el idioma común y el Índice de Desempeño Logístico (LPI). **Fuentes:** WITS, Banco Mundial y CEPII.
+
+# 1. Lectura de los Datos
+
+```{r}
+# ---- 1. LEER LOS DATOS ----
+expo  <- read.csv("exportaciones.csv")
+pib   <- read.csv("pib.csv")
+cepii <- read.csv("cepii.csv")
+lpi   <- read.csv("lpi.csv")
+tlc   <- read.csv("tlc.csv")
+
+# Corrección con datos de Rumania y Serbia
+cepii$iso3[cepii$iso3 == "ROM"] <- "ROU"
+cepii$iso3[cepii$iso3 == "YUG"] <- "SRB"
+
+# Pasar todos los nombres de columnas a minúsculas (PIB -> pib, TLC -> tlc, etc.)
+names(expo)  <- tolower(names(expo))
+names(pib)   <- tolower(names(pib))
+names(cepii) <- tolower(names(cepii))
+names(lpi)   <- tolower(names(lpi))
+names(tlc)   <- tolower(names(tlc))
+
+# Quedarse SOLO con las columnas que se necesitan (adiós Partner, X, X.1, etc.)
+expo  <- expo[,  c("iso3", "exportaciones")]
+pib   <- pib[,   c("iso3", "pib")]
+cepii <- cepii[, c("iso3", "idioma", "dist")]
+lpi   <- lpi[,   c("iso3", "lpi")]
+tlc   <- tlc[,   c("iso3", "tlc")]
+```
+
+# 2. Unión de los datos
+
+```{r}
+# ---- 2. UNIR TODO POR iso3 ----
+datos <- merge(expo,  pib,   by = "iso3")
+datos <- merge(datos, cepii, by = "iso3")
+datos <- merge(datos, lpi,   by = "iso3")
+datos <- merge(datos, tlc,   by = "iso3")
+```
+
+# 3. Limpieza de datos
+
+```{r}
+# ---- 3. LIMPIAR ----
+# Convertir a número por si alguna columna quedó como texto (quita comas de miles)
+for (v in c("exportaciones", "pib", "dist", "lpi")) {
+  datos[[v]] <- as.numeric(gsub(",", "", datos[[v]]))
+}
+
+datos <- na.omit(datos)                    # quita filas con datos faltantes
+datos <- datos[datos$exportaciones > 0, ]  # el log de 0 no existe
+nrow(datos)                                # países en la muestra final
+setdiff(expo$iso3, datos$iso3)             # países que se cayeron
+
+summary(datos)
+```
+
+# 4. Transformación de Logaritmos
+
+```{r}
+# ---- 4. LOGARITMOS ----
+# Solo a las variables continuas. tlc e idioma son 0/1 y no se transforman.
+datos$ln_expo <- log(datos$exportaciones)
+datos$ln_pib  <- log(datos$pib)
+datos$ln_dist <- log(datos$dist)
+datos$ln_lpi  <- log(datos$lpi)
+
+head(datos)
+```
+
+# 5. Estadística Descriptiva
+
+```{r}
+# ---- 5. ESTADÍSTICA DESCRIPTIVA ----
+summary(datos[, c("exportaciones", "pib", "dist", "lpi", "tlc", "idioma")])
+```
+
+**CORRELACIONES**
+
+```{r}
+cor(datos[, c("ln_expo", "ln_pib", "ln_dist", "ln_lpi", "tlc", "idioma")])   # correlaciones
+```
+
+**PAÍSES QUE CUENTAN CON TLC**
+
+```{r}
+table(datos$tlc)      # cuántos países tienen TLC
+```
+
+**PAÍSES DE HABLA ESPAÑOL**
+
+```{r}
+table(datos$idioma)   # cuántos hablan español
+```
+
+**PESO DE USA Y SUS EXPORTACIONES**
+
+```{r}
+# Peso de EE.UU. en las exportaciones de la muestra (en %)
+datos$exportaciones[datos$iso3 == "USA"] / sum(datos$exportaciones) * 100
+```
+
+# 6. Creación del Modelo
+
+```{r}
+# ---- 6. MODELO ----
+# lm = regresión lineal. Lo que está antes de ~ se explica con lo que está después.
+modelo <- lm(ln_expo ~ ln_pib + ln_dist + tlc + idioma + ln_lpi, data = datos)
+
+summary(modelo)                # coeficientes, errores, t, p-valor, R2 y prueba F global
+```
+
+**INTERVALOS DE CONFIANZA AL 95% DE CADA COEFICIENTE**
+
+```{r}
+confint(modelo, level = 0.95)  # intervalos de confianza al 95% de cada coeficiente
+```
+
+## 6.1 VIF FACTOR DE INFLACIÓN DE LA VARIANZA
+
+```{r}
+# ---- 6.1 FACTOR DE INFLACIÓN DE LA VARIANZA (VIF) ----
+# Para cada variable explicativa: se hace una regresión contra las demás,
+# se toma su R2 y se calcula VIF = 1 / (1 - R2).
+# Regla: VIF > 10 indica multicolinealidad grave.
+variables <- c("ln_pib", "ln_dist", "tlc", "idioma", "ln_lpi")
+
+vif <- sapply(variables, function(v) {
+  otras <- setdiff(variables, v)
+  r2 <- summary(lm(reformulate(otras, v), data = datos))$r.squared
+  1 / (1 - r2)
+})
+
+round(vif, 3)
+```
+
+# 7. Prueba F
+
+```{r}
+# ---- 7. PRUEBA F DE TLC E IDIOMA JUNTAS ----
+# Compara el modelo sin tlc ni idioma contra el modelo completo.
+# Si el p-valor es menor a 0.05, tlc e idioma aportan algo juntas.
+restringido <- lm(ln_expo ~ ln_pib + ln_dist + ln_lpi, data = datos)
+anova(restringido, modelo)
+```
+
+# 8. Prueba t
+
+**PRUEBA DE ELASTICIDAD DEL PIB = 1**
+
+```{r}
+# ---- 8. PRUEBA t: ¿LA ELASTICIDAD DEL PIB ES IGUAL A 1? ----
+# H0: b_pib = 1 (las exportaciones crecen igual que el PIB del socio)
+# H1: b_pib distinto de 1
+b_pib  <- coef(modelo)["ln_pib"]
+ee_pib <- summary(modelo)$coefficients["ln_pib", "Std. Error"]
+
+t_pib <- (b_pib - 1) / ee_pib
+p_pib <- 2 * pt(abs(t_pib), df = modelo$df.residual, lower.tail = FALSE)
+
+t_pib   # estadístico t
+```
+
+**RECHAZO DE LA ELASTICIDAD**
+
+```{r}
+p_pib   # si es menor a 0.05, se rechaza que la elasticidad sea 1
+```
+
+# 9. Efecto Real de las Dummies
+
+**EFECTO CON TLC**
+
+```{r}
+# ---- 9. EFECTO REAL DE LAS DUMMIES (en %) ----
+# Como la variable dependiente está en logaritmos, el efecto exacto es (e^b - 1) * 100
+(exp(coef(modelo)["tlc"])    - 1) * 100
+```
+
+**EFECTO CON EL IDIOMA**
+
+```{r}
+(exp(coef(modelo)["idioma"]) - 1) * 100
+```
+
+# 10. Estimación con Intervalo
+
+**EJEMPLO:**
+
+**UN PAÍS HIPOTÉTICO DE 500 MIL MILLONES DE DOLARES, A 8,000 km, SIN TLC, SIN IDIOMA EN COMÚN Y CON UN LPI DE 3.**
+
+```{r}
+# ---- 10. ESTIMACIÓN CON INTERVALO ----
+# Ejemplo: país hipotético con PIB de 500 mil millones de dólares,
+# a 8,000 km, sin TLC, sin idioma común y con LPI de 3.
+# Puedes cambiar estos números.
+nuevo <- data.frame(ln_pib = log(5e11), ln_dist = log(8000),
+                    tlc = 0, idioma = 0, ln_lpi = log(3))
+```
+
+**INTERVALO PUNTUAL (para un solo país con esas características, es más ancho)**
+
+```{r}
+# Intervalo PUNTUAL (para un solo país con esas características, es más ancho)
+# fit = estimación, lwr y upr = límites del intervalo al 95% (todo en logaritmos)
+pred <- predict(modelo, nuevo, interval = "prediction", level = 0.95)
+pred
+exp(pred)   # regresa a miles de dólares (unidades de exportaciones)
+```
+
+**INTERVALO PROMEDIO (para todos los países con esas características)**
+
+```{r}
+# Intervalo PROMEDIO (para todos los países con esas características)
+pred_prom <- predict(modelo, nuevo, interval = "confidence", level = 0.95)
+exp(pred_prom)
+```
+
+# 11. Caso USA
+
+**EXPORTACIONES REALES vs. LAS QUE PREDICE EL MODELO**
+
+```{r}
+# ---- 11. CASO DE ESTADOS UNIDOS ----
+# Exportaciones reales vs. las que predice el modelo
+datos$ajustado <- exp(fitted(modelo))
+datos[datos$iso3 == "USA", c("iso3", "exportaciones", "ajustado")]
+```
+
+**CONSECUENCIAS SI SE ELIMINA A USA: Si los coeficientes casi no cambian, EE.UU. no está distorsionando el modelo.**
+
+```{r}
+# ¿Cambian los resultados si quitamos a EE.UU.?
+# Si los coeficientes casi no cambian, EE.UU. no está distorsionando el modelo.
+modelo_sin_usa <- lm(ln_expo ~ ln_pib + ln_dist + tlc + idioma + ln_lpi,
+                     data = datos[datos$iso3 != "USA", ])
+round(cbind(con_USA = coef(modelo), sin_USA = coef(modelo_sin_usa)), 4)
+```
+
+**R² DEL MODELO SIN USA**
+
+```{r}
+summary(modelo_sin_usa)$r.squared
+```
+
+# 12. Guardar Resultados
+
+```{r}
+# ---- 12. GUARDAR RESULTADOS ----
+
+write.csv(round(summary(modelo)$coefficients, 4), "resultados_modelo.csv")
+write.csv(round(confint(modelo), 4), "intervalos_confianza.csv")
+summary(modelo)$adj.r.squared   # R2 ajustado
+```
