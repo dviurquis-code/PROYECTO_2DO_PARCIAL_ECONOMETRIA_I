@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BERNARDINO MUÑOZ KARLA VERÓNICA - VIURQUIS NAVA DULCE MARÍA - VIURQUIZ ANDRADE DANTE EMILIANO">
+
+<title>Modelo de gravedad del comercio de México (2023)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/clipboard/clipboard.min.js"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/popper.min.js"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/anchor.min.js"></script>
+<link href="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="MODELO_GRAVEDAD_MEXICO2023_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="MODELO_GRAVEDAD_MEXICO2023_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="MODELO_GRAVEDAD_MEXICO2023_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="MODELO_GRAVEDAD_MEXICO2023_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modelo de gravedad del comercio de México (2023)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BERNARDINO MUÑOZ KARLA VERÓNICA - VIURQUIS NAVA DULCE MARÍA - VIURQUIZ ANDRADE DANTE EMILIANO </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Este documento contiene el código en R utilizado para estimar un modelo de gravedad de las exportaciones de México hacia 115 países en 2023. Las variables explicativas son el PIB del país socio, la distancia, la existencia de un TLC, el idioma común y el Índice de Desempeño Logístico (LPI).&nbsp;<strong>Fuentes:</strong>&nbsp;WITS, Banco Mundial y CEPII.</p>
+<section id="lectura-de-los-datos" class="level1">
+<h1>1. Lectura de los Datos</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 1. LEER LOS DATOS ----</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>expo  <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"exportaciones.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>pib   <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"pib.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>cepii <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"cepii.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>lpi   <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"lpi.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>tlc   <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"tlc.csv"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Corrección con datos de Rumania y Serbia</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>cepii<span class="sc">$</span>iso3[cepii<span class="sc">$</span>iso3 <span class="sc">==</span> <span class="st">"ROM"</span>] <span class="ot">&lt;-</span> <span class="st">"ROU"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>cepii<span class="sc">$</span>iso3[cepii<span class="sc">$</span>iso3 <span class="sc">==</span> <span class="st">"YUG"</span>] <span class="ot">&lt;-</span> <span class="st">"SRB"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Pasar todos los nombres de columnas a minúsculas (PIB -&gt; pib, TLC -&gt; tlc, etc.)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(expo)  <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(expo))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pib)   <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(pib))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cepii) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(cepii))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(lpi)   <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(lpi))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tlc)   <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(tlc))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Quedarse SOLO con las columnas que se necesitan (adiós Partner, X, X.1, etc.)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>expo  <span class="ot">&lt;-</span> expo[,  <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"exportaciones"</span>)]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>pib   <span class="ot">&lt;-</span> pib[,   <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"pib"</span>)]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>cepii <span class="ot">&lt;-</span> cepii[, <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"idioma"</span>, <span class="st">"dist"</span>)]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>lpi   <span class="ot">&lt;-</span> lpi[,   <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"lpi"</span>)]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>tlc   <span class="ot">&lt;-</span> tlc[,   <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"tlc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="unión-de-los-datos" class="level1">
+<h1>2. Unión de los datos</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 2. UNIR </span><span class="al">TODO</span><span class="co"> POR iso3 ----</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(expo,  pib,   <span class="at">by =</span> <span class="st">"iso3"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(datos, cepii, <span class="at">by =</span> <span class="st">"iso3"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(datos, lpi,   <span class="at">by =</span> <span class="st">"iso3"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(datos, tlc,   <span class="at">by =</span> <span class="st">"iso3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="limpieza-de-datos" class="level1">
+<h1>3. Limpieza de datos</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 3. LIMPIAR ----</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a número por si alguna columna quedó como texto (quita comas de miles)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"exportaciones"</span>, <span class="st">"pib"</span>, <span class="st">"dist"</span>, <span class="st">"lpi"</span>)) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  datos[[v]] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, datos[[v]]))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(datos)                    <span class="co"># quita filas con datos faltantes</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos[datos<span class="sc">$</span>exportaciones <span class="sc">&gt;</span> <span class="dv">0</span>, ]  <span class="co"># el log de 0 no existe</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(datos)                                <span class="co"># países en la muestra final</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 115</code></pre>
+</div>
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(expo<span class="sc">$</span>iso3, datos<span class="sc">$</span>iso3)             <span class="co"># países que se cayeron</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "ABW" "AND" "AZE" "BLZ" "BMU" "BRB" "BRN" "CIV" "CUB" "CUW" "CYM" "DMA"
+[13] "EAS" "ECS" "ECU" "ETH" "FSM" "GUM" "JOR" "KEN" "KNA" "LBN" "LCA" "LCN"
+[25] "MAC" "MAR" "MEA" "MMR" "MOZ" "MSR" "NAC" "NER" "NPL" "PAK" "PYF" "SAS"
+[37] "SEN" "SLE" "SSF" "SUR" "SWZ" "TCA" "TCD" "TKM" "TUN" "TZA" "UGA" "VCT"
+[49] "VGB" "ZMB"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(datos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        iso3     exportaciones            pib                idioma      
+ Length   :115   Min.   :        0   Min.   :1.336e+09   Min.   :0.0000  
+ N.unique :115   1st Qu.:     5357   1st Qu.:3.124e+10   1st Qu.:0.0000  
+ N.blank  :  0   Median :   100593   Median :1.075e+11   Median :0.0000  
+ Min.nchar:  3   Mean   :  4902757   Mean   :8.862e+11   Mean   :0.1391  
+ Max.nchar:  3   3rd Qu.:   686368   3rd Qu.:5.067e+11   3rd Qu.:0.0000  
+                 Max.   :474696156   Max.   :2.781e+13   Max.   :1.0000  
+      dist            lpi             tlc        
+ Min.   : 1063   Min.   :1.900   Min.   :0.0000  
+ 1st Qu.: 8962   1st Qu.:2.600   1st Qu.:0.0000  
+ Median :10634   Median :3.100   Median :0.0000  
+ Mean   :10098   Mean   :3.102   Mean   :0.4348  
+ 3rd Qu.:12709   3rd Qu.:3.600   3rd Qu.:1.0000  
+ Max.   :17591   Max.   :4.300   Max.   :1.0000  </code></pre>
+</div>
+</div>
+</section>
+<section id="transformación-de-logaritmos" class="level1">
+<h1>4. Transformación de Logaritmos</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 4. LOGARITMOS ----</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo a las variables continuas. tlc e idioma son 0/1 y no se transforman.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>ln_expo <span class="ot">&lt;-</span> <span class="fu">log</span>(datos<span class="sc">$</span>exportaciones)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>ln_pib  <span class="ot">&lt;-</span> <span class="fu">log</span>(datos<span class="sc">$</span>pib)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>ln_dist <span class="ot">&lt;-</span> <span class="fu">log</span>(datos<span class="sc">$</span>dist)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>ln_lpi  <span class="ot">&lt;-</span> <span class="fu">log</span>(datos<span class="sc">$</span>lpi)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  iso3 exportaciones          pib idioma      dist lpi tlc   ln_expo   ln_pib
+1  AGO      17255.20 106042000000      0 12686.000 2.1   0  9.755869 25.38710
+2  ALB       1237.30  23491242727      0 10807.120 2.5   0  7.120687 23.87989
+3  ARE     542850.28 522622000000      0 14372.350 4.0   0 13.204589 26.98212
+4  ARG     937189.74 649462000000      1  7397.651 2.8   0 13.750641 27.19941
+5  ARM        248.84  24185982216      0 12406.080 2.5   0  5.516810 23.90904
+6  ATG       6001.71   2054096296      0  3946.302 2.9   0  8.699800 21.44310
+   ln_dist    ln_lpi
+1 9.448254 0.7419373
+2 9.287960 0.9162907
+3 9.573062 1.3862944
+4 8.908918 1.0296194
+5 9.425942 0.9162907
+6 8.280534 1.0647107</code></pre>
+</div>
+</div>
+</section>
+<section id="estadística-descriptiva" class="level1">
+<h1>5. Estadística Descriptiva</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 5. ESTADÍSTICA DESCRIPTIVA ----</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(datos[, <span class="fu">c</span>(<span class="st">"exportaciones"</span>, <span class="st">"pib"</span>, <span class="st">"dist"</span>, <span class="st">"lpi"</span>, <span class="st">"tlc"</span>, <span class="st">"idioma"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> exportaciones            pib                 dist            lpi       
+ Min.   :        0   Min.   :1.336e+09   Min.   : 1063   Min.   :1.900  
+ 1st Qu.:     5357   1st Qu.:3.124e+10   1st Qu.: 8962   1st Qu.:2.600  
+ Median :   100593   Median :1.075e+11   Median :10634   Median :3.100  
+ Mean   :  4902757   Mean   :8.862e+11   Mean   :10098   Mean   :3.102  
+ 3rd Qu.:   686368   3rd Qu.:5.067e+11   3rd Qu.:12709   3rd Qu.:3.600  
+ Max.   :474696156   Max.   :2.781e+13   Max.   :17591   Max.   :4.300  
+      tlc             idioma      
+ Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000  
+ Mean   :0.4348   Mean   :0.1391  
+ 3rd Qu.:1.0000   3rd Qu.:0.0000  
+ Max.   :1.0000   Max.   :1.0000  </code></pre>
+</div>
+</div>
+<p><strong>CORRELACIONES</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(datos[, <span class="fu">c</span>(<span class="st">"ln_expo"</span>, <span class="st">"ln_pib"</span>, <span class="st">"ln_dist"</span>, <span class="st">"ln_lpi"</span>, <span class="st">"tlc"</span>, <span class="st">"idioma"</span>)])   <span class="co"># correlaciones</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           ln_expo      ln_pib    ln_dist     ln_lpi        tlc      idioma
+ln_expo  1.0000000  0.74128073 -0.3516451  0.5212720  0.4717068  0.33680179
+ln_pib   0.7412807  1.00000000  0.1604447  0.6407112  0.3514194 -0.04145352
+ln_dist -0.3516451  0.16044475  1.0000000  0.1901891 -0.2489495 -0.65150501
+ln_lpi   0.5212720  0.64071116  0.1901891  1.0000000  0.6094587 -0.17151595
+tlc      0.4717068  0.35141939 -0.2489495  0.6094587  1.0000000  0.20494328
+idioma   0.3368018 -0.04145352 -0.6515050 -0.1715160  0.2049433  1.00000000</code></pre>
+</div>
+</div>
+<p><strong>PAÍSES QUE CUENTAN CON TLC</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(datos<span class="sc">$</span>tlc)      <span class="co"># cuántos países tienen TLC</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 0  1 
+65 50 </code></pre>
+</div>
+</div>
+<p><strong>PAÍSES DE HABLA ESPAÑOL</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(datos<span class="sc">$</span>idioma)   <span class="co"># cuántos hablan español</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 0  1 
+99 16 </code></pre>
+</div>
+</div>
+<p><strong>PESO DE USA Y SUS EXPORTACIONES</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Peso de EE.UU. en las exportaciones de la muestra (en %)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>exportaciones[datos<span class="sc">$</span>iso3 <span class="sc">==</span> <span class="st">"USA"</span>] <span class="sc">/</span> <span class="fu">sum</span>(datos<span class="sc">$</span>exportaciones) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 84.19329</code></pre>
+</div>
+</div>
+</section>
+<section id="creación-del-modelo" class="level1">
+<h1>6. Creación del Modelo</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 6. MODELO ----</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># lm = regresión lineal. Lo que está antes de ~ se explica con lo que está después.</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(ln_expo <span class="sc">~</span> ln_pib <span class="sc">+</span> ln_dist <span class="sc">+</span> tlc <span class="sc">+</span> idioma <span class="sc">+</span> ln_lpi, <span class="at">data =</span> datos)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo)                <span class="co"># coeficientes, errores, t, p-valor, R2 y prueba F global</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = ln_expo ~ ln_pib + ln_dist + tlc + idioma + ln_lpi, 
+    data = datos)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.0305 -0.5828 -0.0881  0.8536  3.1915 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.09465    3.22393  -0.960   0.3392    
+ln_pib       1.20986    0.09794  12.353  &lt; 2e-16 ***
+ln_dist     -2.27654    0.32503  -7.004 2.15e-10 ***
+tlc         -0.12002    0.40711  -0.295   0.7687    
+idioma       1.19016    0.54593   2.180   0.0314 *  
+ln_lpi       3.15944    1.24818   2.531   0.0128 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.497 on 109 degrees of freedom
+Multiple R-squared:  0.799, Adjusted R-squared:  0.7898 
+F-statistic: 86.68 on 5 and 109 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><strong>INTERVALOS DE CONFIANZA AL 95% DE CADA COEFICIENTE</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(modelo, <span class="at">level =</span> <span class="fl">0.95</span>)  <span class="co"># intervalos de confianza al 95% de cada coeficiente</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 2.5 %     97.5 %
+(Intercept) -9.4843730  3.2950797
+ln_pib       1.0157547  1.4039745
+ln_dist     -2.9207366 -1.6323454
+tlc         -0.9268964  0.6868542
+idioma       0.1081391  2.2721806
+ln_lpi       0.6855874  5.6332859</code></pre>
+</div>
+</div>
+</section>
+<section id="prueba-f" class="level1">
+<h1>7. Prueba F</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 7. PRUEBA F DE TLC E IDIOMA JUNTAS ----</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Compara el modelo sin tlc ni idioma contra el modelo completo.</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Si el p-valor es menor a 0.05, tlc e idioma aportan algo juntas.</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>restringido <span class="ot">&lt;-</span> <span class="fu">lm</span>(ln_expo <span class="sc">~</span> ln_pib <span class="sc">+</span> ln_dist <span class="sc">+</span> ln_lpi, <span class="at">data =</span> datos)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(restringido, modelo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: ln_expo ~ ln_pib + ln_dist + ln_lpi
+Model 2: ln_expo ~ ln_pib + ln_dist + tlc + idioma + ln_lpi
+  Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+1    111 254.80                              
+2    109 244.16  2    10.648 2.3769 0.09763 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="prueba-t" class="level1">
+<h1>8. Prueba t</h1>
+<p><strong>PRUEBA DE ELASTICIDAD DEL PIB = 1</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 8. PRUEBA t: ¿LA ELASTICIDAD DEL PIB ES IGUAL A 1? ----</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># H0: b_pib = 1 (las exportaciones crecen igual que el PIB del socio)</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># H1: b_pib distinto de 1</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>b_pib  <span class="ot">&lt;-</span> <span class="fu">coef</span>(modelo)[<span class="st">"ln_pib"</span>]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>ee_pib <span class="ot">&lt;-</span> <span class="fu">summary</span>(modelo)<span class="sc">$</span>coefficients[<span class="st">"ln_pib"</span>, <span class="st">"Std. Error"</span>]</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>t_pib <span class="ot">&lt;-</span> (b_pib <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> ee_pib</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>p_pib <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="fu">abs</span>(t_pib), <span class="at">df =</span> modelo<span class="sc">$</span>df.residual, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>t_pib   <span class="co"># estadístico t</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ln_pib 
+2.142831 </code></pre>
+</div>
+</div>
+<p><strong>RECHAZO DE LA ELASTICIDAD</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p_pib   <span class="co"># si es menor a 0.05, se rechaza que la elasticidad sea 1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    ln_pib 
+0.03435134 </code></pre>
+</div>
+</div>
+</section>
+<section id="efecto-real-de-las-dummies" class="level1">
+<h1>9. Efecto Real de las Dummies</h1>
+<p><strong>EFECTO CON TLC</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 9. EFECTO REAL DE LAS DUMMIES (en %) ----</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Como la variable dependiente está en logaritmos, el efecto exacto es (e^b - 1) * 100</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>(<span class="fu">exp</span>(<span class="fu">coef</span>(modelo)[<span class="st">"tlc"</span>])    <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      tlc 
+-11.30983 </code></pre>
+</div>
+</div>
+<p><strong>EFECTO CON EL IDIOMA</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">exp</span>(<span class="fu">coef</span>(modelo)[<span class="st">"idioma"</span>]) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  idioma 
+228.7607 </code></pre>
+</div>
+</div>
+</section>
+<section id="estimación-con-intervalo" class="level1">
+<h1>10. Estimación con Intervalo</h1>
+<p><strong>EJEMPLO:</strong></p>
+<p><strong>UN PAÍS HIPOTÉTICO DE 500 MIL MILLONES DE DOLARES, A 8,000 km, SIN TLC, SIN IDIOMA EN COMÚN Y CON UN LPI DE 3.</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 10. ESTIMACIÓN CON INTERVALO ----</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: país hipotético con PIB de 500 mil millones de dólares,</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># a 8,000 km, sin TLC, sin idioma común y con LPI de 3.</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Puedes cambiar estos números.</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>nuevo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ln_pib =</span> <span class="fu">log</span>(<span class="fl">5e11</span>), <span class="at">ln_dist =</span> <span class="fu">log</span>(<span class="dv">8000</span>),</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">tlc =</span> <span class="dv">0</span>, <span class="at">idioma =</span> <span class="dv">0</span>, <span class="at">ln_lpi =</span> <span class="fu">log</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>INTERVALO PUNTUAL (para un solo país con esas características, es más ancho)</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalo PUNTUAL (para un solo país con esas características, es más ancho)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit = estimación, lwr y upr = límites del intervalo al 95% (todo en logaritmos)</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo, nuevo, <span class="at">interval =</span> <span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>pred</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       fit      lwr      upr
+1 12.50781 9.492101 15.52351</code></pre>
+</div>
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(pred)   <span class="co"># regresa a miles de dólares (unidades de exportaciones)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       fit      lwr     upr
+1 270440.7 13254.62 5517937</code></pre>
+</div>
+</div>
+<p><strong>INTERVALO PROMEDIO (para todos los países con esas características)</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalo PROMEDIO (para todos los países con esas características)</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>pred_prom <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo, nuevo, <span class="at">interval =</span> <span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(pred_prom)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       fit      lwr    upr
+1 270440.7 157028.7 465763</code></pre>
+</div>
+</div>
+</section>
+<section id="caso-usa" class="level1">
+<h1>11. Caso USA</h1>
+<p><strong>EXPORTACIONES REALES vs.&nbsp;LAS QUE PREDICE EL MODELO</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 11. CASO DE ESTADOS UNIDOS ----</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Exportaciones reales vs. las que predice el modelo</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>ajustado <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">fitted</span>(modelo))</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>datos[datos<span class="sc">$</span>iso3 <span class="sc">==</span> <span class="st">"USA"</span>, <span class="fu">c</span>(<span class="st">"iso3"</span>, <span class="st">"exportaciones"</span>, <span class="st">"ajustado"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    iso3 exportaciones  ajustado
+112  USA     474696156 468653985</code></pre>
+</div>
+</div>
+<p><strong>CONSECUENCIAS SI SE ELIMINA A USA: Si los coeficientes casi no cambian, EE.UU. no está distorsionando el modelo.</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Cambian los resultados si quitamos a EE.UU.?</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Si los coeficientes casi no cambian, EE.UU. no está distorsionando el modelo.</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>modelo_sin_usa <span class="ot">&lt;-</span> <span class="fu">lm</span>(ln_expo <span class="sc">~</span> ln_pib <span class="sc">+</span> ln_dist <span class="sc">+</span> tlc <span class="sc">+</span> idioma <span class="sc">+</span> ln_lpi,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> datos[datos<span class="sc">$</span>iso3 <span class="sc">!=</span> <span class="st">"USA"</span>, ])</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cbind</span>(<span class="at">con_USA =</span> <span class="fu">coef</span>(modelo), <span class="at">sin_USA =</span> <span class="fu">coef</span>(modelo_sin_usa)), <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            con_USA sin_USA
+(Intercept) -3.0946 -3.0965
+ln_pib       1.2099  1.2096
+ln_dist     -2.2765 -2.2757
+tlc         -0.1200 -0.1201
+idioma       1.1902  1.1913
+ln_lpi       3.1594  3.1604</code></pre>
+</div>
+</div>
+<p><strong>R² DEL MODELO SIN USA</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_sin_usa)<span class="sc">$</span>r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7843282</code></pre>
+</div>
+</div>
+</section>
+<section id="guardar-resultados" class="level1">
+<h1>12. Guardar Resultados</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Ver código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- 12. GUARDAR RESULTADOS ----</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">round</span>(<span class="fu">summary</span>(modelo)<span class="sc">$</span>coefficients, <span class="dv">4</span>), <span class="st">"resultados_modelo.csv"</span>)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">round</span>(<span class="fu">confint</span>(modelo), <span class="dv">4</span>), <span class="st">"intervalos_confianza.csv"</span>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo)<span class="sc">$</span>adj.r.squared   <span class="co"># R2 ajustado</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7898162</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
